@@ -9,14 +9,14 @@ public enum ProductType {
 }
 
 public struct StoreProduct {
-    let id: String
-    let type: ProductType
-    let displayName: String
-    let description: String
-    let price: Decimal
-    let displayPrice: String
-    let isFamilyShareable: Bool
-    var isPurchased: Bool
+    public let id: String
+    public let type: ProductType
+    public let displayName: String
+    public let description: String
+    public let price: Decimal
+    public let displayPrice: String
+    public let isFamilyShareable: Bool
+    public var isPurchased: Bool
 }
 
 public enum PurchasesError: Error {
