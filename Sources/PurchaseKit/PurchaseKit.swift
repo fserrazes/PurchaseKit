@@ -8,7 +8,7 @@ import StoreKit
 /// ``Purchases`` is the entry point for Purchasekit.framework.
 /// - Warning: Only one instance of Purchases should be instantiated at a time! Use a configure method to let the
 /// framework handle the singleton instance for you.
-public final class Purchases: NSObject {
+public final class Purchases: NSObject, PurchasesProtocol {
     
     /// Returns the already configured instance of ``Purchases``.
     /// - Warning: this method will crash with `fatalError` if ``Purchases`` has not been initialized through
