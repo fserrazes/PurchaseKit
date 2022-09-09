@@ -17,6 +17,18 @@ public struct StoreProduct {
     public let displayPrice: String
     public let isFamilyShareable: Bool
     public var isPurchased: Bool
+    
+    public init(id: String, type: ProductType, displayName: String, description: String, price: Decimal,
+                displayPrice: String, isFamilyShareable: Bool, isPurchased: Bool) {
+        self.id = id
+        self.type = type
+        self.displayName = displayName
+        self.description = description
+        self.price = price
+        self.displayPrice = displayPrice
+        self.isFamilyShareable = isFamilyShareable
+        self.isPurchased = isPurchased
+    }
 }
 
 public enum PurchasesError: Error {
