@@ -8,34 +8,27 @@ import StoreKit
 /// ``Purchases`` is the entry point for Purchasekit.framework.
 /// - Warning: Only one instance of Purchases should be instantiated at a time! Use a configure method to let the
 /// framework handle the singleton instance for you.
-public final class Purchases: NSObject, PurchasesProtocol {
+public final class Purchases: PurchasesProtocol {
     
     /// Returns the already configured instance of ``Purchases``.
     /// - Warning: this method will crash with `fatalError` if ``Purchases`` has not been initialized through
-    /// ``configure(with identifiers:)`` or one of its overloads. If there's a chance that may have not happened yet,
-    /// you can use ``isConfigured`` to check if it's safe to call.
+    /// ``configure(with identifiers:)`` or one of its overloads.
     public static var shared: Purchases {
-        guard let purchases = Self.purchases.value else {
-            fatalError("Purchases has not been configured. Please call Purchases.configure()")
+        if let initializedShared = purchases {
+            return initializedShared
         }
-        return purchases
+        fatalError("Purchases has not been configured. Please call Purchases.configure()")
     }
     
-    private static let purchases: Atomic<Purchases?> = .init(nil)
-    private var identifiers: [String] = []
+    private static var purchases: Purchases?
+    private var identifiers: [String]
+
     private (set) var updateListenerTask: Task<Void, Error>? = nil
-    
-    /// Returns `true` if PurchaseKit has already been initialized through ``configure(with identifiers:)``
-    /// or one of is overloads.
-    public static var isConfigured: Bool { Self.purchases.value != nil }
     
     public weak var delegate: PurchasesDelegate?
     
     private init(identifiers: [String]) {
-        Self.purchases.modify {
-            $0?.identifiers = identifiers
-        }
-        super.init()
+        self.identifiers = identifiers
         
         // Start a transaction listener
         updateListenerTask = listenForTransactions()
@@ -49,19 +42,8 @@ public final class Purchases: NSObject, PurchasesProtocol {
     /// Configures an instance of the Purchases SDK with a specified identifiers keys
     /// - Parameter identifiers: A set of product identifiers for in-app purchases setup via App Store Connect.
     /// - Returns: An instantiated ``Purchases`` object that has been set as a singleton.
-    @discardableResult public static func configure(with identifiers: [String]) -> Purchases {
-        let purchases = Purchases(identifiers: identifiers)
-        setDefaultInstance(purchases)
-        return purchases
-    }
-    
-    private static func setDefaultInstance(_ purchases: Purchases) {
-        self.purchases.modify { currentInstance in
-            if currentInstance != nil {
-                print("configure.purchase_instance_already_set")
-            }
-            currentInstance = purchases
-        }
+    @discardableResult public class func configure(with identifiers: [String]) -> Purchases {
+        return Purchases(identifiers: identifiers)
     }
 }
 
@@ -88,6 +70,9 @@ extension Purchases {
                     products.append(mapper(product: product))
                 }
             }
+            // Purchases status will be send through the delegate
+            Task.detached { await self.updateCustomerProductStatus() }
+            
             return .success(products)
         } catch {
             print("Failed product request from the App Store server: \(error)")
@@ -130,6 +115,7 @@ extension Purchases {
 }
 
 // MARK: - Private Helpers
+
 extension Purchases {
     private func mapper(product: Product, isPurchased: Bool = false) -> StoreProduct {
         let type: ProductType = product.type == .consumable ? .consumable : .nonConsumable

@@ -3,6 +3,6 @@
 
 import Foundation
 
-public protocol PurchasesDelegate: NSObjectProtocol {
+public protocol PurchasesDelegate: AnyObject {
     func didFinishedPurchases(product: StoreProduct)
 }
