@@ -21,10 +21,9 @@ public final class Purchases: PurchasesProtocol {
     }
     
     private static var purchases: Purchases?
-    private var identifiers: [String]
-
     private (set) var updateListenerTask: Task<Void, Error>? = nil
     
+    private var identifiers: [String]
     public weak var delegate: PurchasesDelegate?
     
     private init(identifiers: [String]) {
@@ -41,6 +40,7 @@ public final class Purchases: PurchasesProtocol {
     
     /// Configures an instance of the Purchases SDK with a specified identifiers keys
     /// - Parameter identifiers: A set of product identifiers for in-app purchases setup via App Store Connect.
+    /// [AppStoreConnect](https://appstoreconnect.apple.com/)
     /// - Returns: An instantiated ``Purchases`` object that has been set as a singleton.
     @discardableResult public class func configure(with identifiers: [String]) -> Purchases {
         return Purchases(identifiers: identifiers)
@@ -59,6 +59,12 @@ extension Purchases {
         return SKPaymentQueue.canMakePayments()
     }
     
+    /// Fetches the ``StoreProduct``s configured in ``Purchases/configure(with:)``.
+    ///
+    /// Purchases status will be send through the delegate later.
+    /// - Note: `Result` may be return without ``StoreProduct`` s that you are expecting. This is usually caused by
+    /// AppleStoreConnect configuration errors. Ensure your IAPs have the "Ready to Submit" status in AppleStoreConnect.
+    /// - Returns: List of Consumable and NonConsumable StoreProduct or ``PurchasesError`` with description in case of any error.
     public func requestProducts() async -> Result<[StoreProduct], PurchasesError> {
         do {
             // Request products from the App Store using identifiers.
@@ -80,6 +86,15 @@ extension Purchases {
         }
     }
     
+    
+    /// Initiates a purchase of a ``StoreProduct``.
+    ///
+    /// - Important: Call this method when a user has decided to purchase a product.
+    /// Only call this in direct response to user input.
+    ///
+    /// - Note: You do not need to finish the transaction yourself, ``Purchases`` will handle this for you.
+    /// - Parameter productId: The product identifier defined in the for in-app which user intends to purchase.
+    /// - Returns: Returns if transaction completes with success or not.
     public func purchase(productId: String) async throws -> Bool {
         let storeProduct = try await Product.products(for: [productId])
         if let product = storeProduct.first {

@@ -3,6 +3,7 @@
 
 import Foundation
 
+/// Delegate for ``Purchases`` instance. The delegate is responsible for handling purchase finish status.
 public protocol PurchasesDelegate: AnyObject {
     func didFinishedPurchases(product: StoreProduct)
 }
