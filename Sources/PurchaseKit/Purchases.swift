@@ -100,6 +100,7 @@ extension Purchases {
             // Begin purchasing the 'Product' the user selects.
             let result = try await product.purchase()
 
+            // swiftlint:disable switch_case_alignment
             switch result {
                 case .success(let verification):
                     // If transaction isn't verified, this function rethrows the verification error.
@@ -141,6 +142,7 @@ extension Purchases {
 
     private func checkVerified<T>(_ result: VerificationResult<T>) throws -> T {
         // Check whether the JWS passes StoreKit verification.
+        // swiftlint:disable switch_case_alignment
         switch result {
             case .unverified:
                 // StoreKit parses the JWS, but it fails verification.
