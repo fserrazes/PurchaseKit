@@ -17,7 +17,7 @@ public struct StoreProduct {
     public let displayPrice: String
     public let isFamilyShareable: Bool
     public var isPurchased: Bool
-    
+
     public init(id: String, type: ProductType, displayName: String, description: String, price: Decimal,
                 displayPrice: String, isFamilyShareable: Bool, isPurchased: Bool) {
         self.id = id
@@ -34,5 +34,4 @@ public struct StoreProduct {
 public enum PurchasesError: Error {
     case unverified
     case failed(Error)
-    
 }

@@ -5,7 +5,7 @@ import Foundation
 
 public protocol PurchasesProtocol {
     var delegate: PurchasesDelegate? { get set }
-    
+
     func requestProducts() async -> Result<[StoreProduct], PurchasesError>
     func purchase(productId: String) async throws -> Bool
     func restore() async
