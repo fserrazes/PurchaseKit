@@ -134,7 +134,7 @@ extension Purchases {
 extension Purchases {
     private func mapper(product: Product, isPurchased: Bool = false) -> StoreProduct {
         let type: ProductType = product.type == .consumable ? .consumable : .nonConsumable
-        // swiftlint: disable line_length
+        // swiftlint:disable line_length
         let product = StoreProduct(id: product.id, type: type, displayName: product.displayName, description: product.description, price: product.price, displayPrice: product.displayPrice, isFamilyShareable: product.isFamilyShareable, isPurchased: isPurchased)
 
         return product
