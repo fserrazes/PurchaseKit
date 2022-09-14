@@ -1,6 +1,7 @@
 # PurchaseKit
 
 <p>
+    <img src="https://github.com/fserrazes/PurchaseKit/actions/workflows/CI.yml/badge.svg" />
     <a href="https://github.com/apple/swift-package-manager">
       <img src="https://img.shields.io/badge/spm-compatible-brightgreen.svg?style=flat" />
     </a>
