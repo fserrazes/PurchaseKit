@@ -64,7 +64,7 @@ extension Purchases {
     /// Purchases status will be send through the delegate later.
     /// - Note: `Result` may be return without ``StoreProduct`` s that you are expecting. This is usually caused by
     /// AppleStoreConnect configuration errors. Ensure your IAPs have the "Ready to Submit" status in AppleStoreConnect.
-    /// - Returns: List of Consumable and NonConsumable StoreProduct or ``PurchasesError`` with description in case of any error.
+    /// - Returns: List of Consumable and NonConsumable StoreProduct or ``PurchasesError`` with description.
     public func requestProducts() async -> Result<[StoreProduct], PurchasesError> {
         do {
             // Request products from the App Store using identifiers.
@@ -102,7 +102,7 @@ extension Purchases {
 
             switch result {
                 case .success(let verification):
-                    // Check whether the transaction is verified. If it isn't, this function rethrows the verification error.
+                    // If transaction isn't verified, this function rethrows the verification error.
                     let transaction = try checkVerified(verification)
 
                     // The transaction is verified. Deliver content to the user.
@@ -133,6 +133,7 @@ extension Purchases {
 extension Purchases {
     private func mapper(product: Product, isPurchased: Bool = false) -> StoreProduct {
         let type: ProductType = product.type == .consumable ? .consumable : .nonConsumable
+        // swiftlint: disable line_length
         let product = StoreProduct(id: product.id, type: type, displayName: product.displayName, description: product.description, price: product.price, displayPrice: product.displayPrice, isFamilyShareable: product.isFamilyShareable, isPurchased: isPurchased)
 
         return product
